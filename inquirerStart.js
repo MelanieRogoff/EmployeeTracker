@@ -2,6 +2,8 @@ const mysql = require("mysql");
 const inquirer = require("inquirer");
 const consoleTable = require("console.table");
 
+  
+
 const connection = mysql.createConnection({
   host: "localhost",
 
@@ -103,10 +105,15 @@ function runInquirer() {
                   "Legal"
               ]
           })
-          .then(function() {
+          .then(function(answer) {
             //display the department
-            })
-  }
+            console.table([
+                {
+                Department: answer.viewDepartment,
+                }
+            ])
+          })
+        }
 
     function viewRoles() {
         inquirer
@@ -124,10 +131,15 @@ function runInquirer() {
                     "Lawyer"
                 ]
             })
-            .then(function() {
-                //display the role
-                })
-    }
+            .then(function(viewer) {
+                //display the department
+                console.table([
+                    {
+                    Role: viewer.viewRoles,
+                    }
+                ])
+              })
+            }
 
     function addEmployee() {
         inquirer
@@ -233,3 +245,4 @@ function runInquirer() {
                 //update the role
                 })
     }
+  

@@ -1,6 +1,5 @@
 const mysql = require("mysql");
 const consoleTable = require("console.table");
-const inquirerStart = require("./inquirerStart");
 
 //SQL JOINS FOR THE 3 TABLES
   
