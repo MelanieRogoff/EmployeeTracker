@@ -75,7 +75,6 @@ function runInquirer() {
         }
       });
   }
-
   function viewEmployee() {
       inquirer
           .prompt({
