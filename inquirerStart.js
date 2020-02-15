@@ -2,8 +2,6 @@ const mysql = require("mysql");
 const inquirer = require("inquirer");
 const consoleTable = require("console.table");
 
-  
-
 const connection = mysql.createConnection({
   host: "localhost",
 
@@ -77,7 +75,7 @@ function runInquirer() {
         }
       });
   }
-  function viewEmployee() {
+    function viewEmployee() {
       inquirer
           .prompt({
               name: "viewEmployee",
@@ -89,10 +87,11 @@ function runInquirer() {
           })
           .then(function(answer) {
               //display the employee
+              continuer();
               })
   }
 
-  function viewDepartment() {
+    function viewDepartment() {
       inquirer
           .prompt({
               name: "viewDepartment",
@@ -112,6 +111,7 @@ function runInquirer() {
                 Department: answer.viewDepartment,
                 }
             ])
+            continuer();
           })
         }
 
@@ -138,16 +138,17 @@ function runInquirer() {
                     Role: viewer.viewRoles,
                     }
                 ])
+                continuer();
               })
             }
 
     function addEmployee() {
         inquirer
-            .prompt(
+            .prompt([
             {
                 type: "input",
                 message: "What is the employee's first name?",
-                name: "firstName", //Right now I can't get past first name
+                name: "firstName"
             },
             {  
                 type: "input",
@@ -172,28 +173,49 @@ function runInquirer() {
                 type: "input",
                 message: "What is the first and last name of the employee's manager?",
                 name: "manager"
+            }])
+            .then(function(answers) {
+                // Search for manager, grab manager's corresponding ID, then return it 
+                // connection.query("SELECT * FROM top5000 WHERE ?", { song: answer.song }, function(err, res) {
+
+
+                const query = connection.query("INSERT INTO employee SET ?",
+                 {
+                    first_name: answers.firstName,
+                    last_name: answers.lastName,
+                    role_id: answers.role,
+                    manager_id: answers.manager
+                 },
+                 
+             )
+             continuer();
             })
-            .then(function() {
-                //add the employee
-                })
     }
 
     function addDepartment() {
         inquirer
             .prompt({
                 name: "addDepartment",
-                type: "list",
-                message: "Which department would you like to add?",
-                choices: [
-                    "Sales",
-                    "Engineering",
-                    "Finance",
-                    "Legal"
-                ]
+                type: "input",
+                message: "Which department would you like to add?",              
             })
-            .then(function() {
-                //add the department
-                })
+            .then(function(deptName) {
+                if (addDepartment == deptName.addDepartment) {
+                    console.log("You cannot have a duplicate.")
+                    continuer();
+                }
+
+                connection.query("INSERT INTO department SET ?",
+                 { //add the department
+                    name: deptName.addDepartment
+                 },
+                )
+                //DISPLAY THE DEPARTMENT NAME
+                 console.log("You have added the " + deptName.addDepartment + " department."); 
+                //ASK IF THEY WANT TO CONTINUE
+                 continuer();
+            
+            })
     }
 
     function addRoles() {
@@ -212,15 +234,17 @@ function runInquirer() {
                 ],
                 name: "addRoles"
             })
-            .then(function() {
+            .then(function(roles) {
+                console.log("You have added the role of " + roles.addRoles + ".");
                 //add the role
+                continuer();
                 })
     }
 
     function updateRoles() {
         inquirer
-            .prompt({
-                type: "list", //Right now I can't get past this
+            .prompt([{
+                type: "list", 
                 message: "Which employee's role would you like to update?",
                 choices: [
                     //employee name here
@@ -240,9 +264,57 @@ function runInquirer() {
                     "Lawyer"
                     ],
                 name: "addRoles"
-             })
-            .then(function() {
-                //update the role
+             }])
+            .then(function(option) {
+                if (option.addRoles == "Sales Lead") {
+                    console.log ("INSERT EMPLOYEE NAME HERE is now a " + option.addRoles)
+                    //return view of employee with the new option
+                }
+                if (option.addRoles == "Salesperson") {
+                    console.log ("INSERT EMPLOYEE NAME HERE is now a " + option.addRoles)
+                    //return view of employee with the new option
+                }
+                if (option.addRoles == "Lead Engineer") {
+                    console.log ("INSERT EMPLOYEE NAME HERE is now a " + option.addRoles)
+                    //return view of employee with the new option
+                }
+                if (option.addRoles == "Software Engineer") {
+                    console.log ("INSERT EMPLOYEE NAME HERE is now a " + option.addRoles)
+                    //return view of employee with the new option
+                }
+                if (option.addRoles == "Accountant") {
+                    console.log ("INSERT EMPLOYEE NAME HERE is now a " + option.addRoles)
+                    //return view of employee with the new option
+                }
+                if (option.addRoles == "Legal Team Lead") {
+                    console.log ("INSERT EMPLOYEE NAME HERE is now a " + option.addRoles)
+                    //return view of employee with the new option
+                }
+                if (option.addRoles == "Lawyer") {
+                    console.log ("INSERT EMPLOYEE NAME HERE is now a " + option.addRoles)
+                    //return view of employee with the new option
+                }
+                continuer();
                 })
     }
   
+
+    function continuer() {
+        inquirer
+                .prompt({
+                    name: "continue",
+                    type: "list",
+                    message: "Would you like to continue?",       
+                    choices: [
+                        "Yes", "No"
+                    ]       
+                })
+                .then(function(choice) {
+                    if (choice.continue == "Yes") {
+                        runInquirer();
+                    }
+                    if (choice.continue == "No") {
+                        connection.end();
+                    }
+                })
+    }
