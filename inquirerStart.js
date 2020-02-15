@@ -1,7 +1,7 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 const consoleTable = require("console.table");
-
+const grabEmployees = require("./employeeFunctions");
 const connection = mysql.createConnection({
   host: "localhost",
 
@@ -30,8 +30,8 @@ function runInquirer() {
         message: "What would you like to do?",
         choices: [
           "View All Employees",
-          "View All Departments",
-          "View All Roles",
+          "View Employees By Departments",
+          "View All Employees By Role",
           "Add Employee",
           "Add Departments",
           "Add Roles", 
@@ -45,11 +45,11 @@ function runInquirer() {
             viewEmployee(); 
             break;
   
-        case "View All Departments":
+        case "View Employees By Departments":
             viewDepartment();
             break;
   
-        case "View All Roles":
+        case "View All Employees By Role":
             viewRoles();
             break;
   
@@ -76,17 +76,19 @@ function runInquirer() {
       });
   }
     function viewEmployee() {
+        const date = grabEmployees();
+        console.log(date);
       inquirer
           .prompt({
               name: "viewEmployee",
               type: "list",
               message: "Which employee would you like to view?",
               choices: [
-                  //Have all employees display here
+                  date
               ]
           })
           .then(function(answer) {
-              //display the employee
+              //display the employee & info
               continuer();
               })
   }
@@ -96,7 +98,7 @@ function runInquirer() {
           .prompt({
               name: "viewDepartment",
               type: "list",
-              message: "Which department would you like to view?",
+              message: "Which department would you like to sort employees by?",
               choices: [
                   "Sales",
                   "Engineering",
@@ -105,12 +107,9 @@ function runInquirer() {
               ]
           })
           .then(function(answer) {
-            //display the department
-            console.table([
-                {
-                Department: answer.viewDepartment,
-                }
-            ])
+            //PROBABLY DO SELECT * FROM employees WHERE department = ? or something like that
+            //DISPLAY THE ABOVE
+            //Then run continuer
             continuer();
           })
         }
@@ -120,7 +119,7 @@ function runInquirer() {
             .prompt({
                 name: "viewRoles",
                 type: "list",
-                message: "Which Role would you like to view?",
+                message: "Which role would you like to have the employees sorted by?",
                 choices: [
                     "Sales Lead",
                     "Salesperson",
@@ -132,12 +131,9 @@ function runInquirer() {
                 ]
             })
             .then(function(viewer) {
-                //display the department
-                console.table([
-                    {
-                    Role: viewer.viewRoles,
-                    }
-                ])
+                //PROBABLY DO SELECT * FROM employees WHERE titles = ? or something like that
+                //DISPLAY THE ABOVE
+                //Then run continuer
                 continuer();
               })
             }
@@ -178,8 +174,8 @@ function runInquirer() {
                 // Search for manager, grab manager's corresponding ID, then return it 
                 // connection.query("SELECT * FROM top5000 WHERE ?", { song: answer.song }, function(err, res) {
 
-
-                const query = connection.query("INSERT INTO employee SET ?",
+                
+                connection.query("INSERT INTO employee SET ?", //put in other file
                  {
                     first_name: answers.firstName,
                     last_name: answers.lastName,
