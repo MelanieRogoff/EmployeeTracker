@@ -1,7 +1,6 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 const consoleTable = require("console.table");
-const grabEmployees = require("./employeeFunctions");
 const connection = mysql.createConnection({
   host: "localhost",
 
@@ -21,36 +20,26 @@ connection.connect(function(err) {
     runInquirer();
   });
   
-
 function runInquirer() {
     inquirer
       .prompt({
         name: "action",
         type: "list",
         message: "What would you like to do?",
-        choices: [
-          "View All Employees",
-          "View Employees By Departments",
-          "View All Employees By Role",
-          "Add Employee",
-          "Add Departments",
-          "Add Roles", 
-          "Update Exmployee Roles",
-          "Exit"
-        ]
+        choices: ["View All Employees", "View Employees By Departments", "View All Employees By Role", "Add Employee", "Add Departments", "Add Roles", "Update Employee Roles", "Exit"]
       })
       .then(function(answer) {
         switch (answer.action) {
         case "View All Employees":
             viewEmployee(); 
             break;
-  
+
         case "View Employees By Departments":
             viewDepartment();
             break;
   
-        case "View All Employees By Role":
-            viewRoles();
+        case "View All Employees By Manager":
+            viewManagers();
             break;
   
         case "Add Employee":
@@ -76,19 +65,15 @@ function runInquirer() {
       });
   }
     function viewEmployee() {
-        const date = grabEmployees();
-        console.log(date);
       inquirer
           .prompt({
               name: "viewEmployee",
               type: "list",
               message: "Which employee would you like to view?",
-              choices: [
-                  date
-              ]
+              choices: [] //Have to enter employees (in form of a function, maybe?) in the brackets
           })
           .then(function(answer) {
-              //display the employee & info
+              //display employee & info
               continuer();
               })
   }
@@ -99,41 +84,25 @@ function runInquirer() {
               name: "viewDepartment",
               type: "list",
               message: "Which department would you like to sort employees by?",
-              choices: [
-                  "Sales",
-                  "Engineering",
-                  "Finance",
-                  "Legal"
-              ]
+              choices: ["Sales", "Engineering", "Finance", "Legal"]
           })
-          .then(function(answer) {
-            //PROBABLY DO SELECT * FROM employees WHERE department = ? or something like that
-            //DISPLAY THE ABOVE
-            //Then run continuer
+          .then(function() {
+            //PROBABLY DO SELECT * FROM employees WHERE department = ? THEN DISPLAY IT
             continuer();
           })
         }
 
-    function viewRoles() {
+    function viewManagers() {
         inquirer
             .prompt({
-                name: "viewRoles",
+                name: "viewManager",
                 type: "list",
-                message: "Which role would you like to have the employees sorted by?",
-                choices: [
-                    "Sales Lead",
-                    "Salesperson",
-                    "Lead Engineer",
-                    "Software Engineer",
-                    "Accountant",
-                    "Legal Team Lead", 
-                    "Lawyer"
-                ]
+                message: "Which manager would you like to have the employees sorted by?",
+                choices: [] //have f(x) that displays the managers?
+                
             })
             .then(function(viewer) {
-                //PROBABLY DO SELECT * FROM employees WHERE titles = ? or something like that
-                //DISPLAY THE ABOVE
-                //Then run continuer
+                //PROBABLY DO SELECT * FROM employees WHERE manager_id = ? THEN DISPLAY IT
                 continuer();
               })
             }
@@ -154,15 +123,7 @@ function runInquirer() {
             {
                 type: "list",
                 message: "What is the employee's role?",
-                choices: [
-                    "Sales Lead",
-                    "Salesperson",
-                    "Lead Engineer",
-                    "Software Engineer",
-                    "Accountant",
-                    "Legal Team Lead",
-                    "Lawyer"
-                ],
+                choices: ["Sales Lead", "Salesperson", "Lead Engineer", "Software Engineer", "Accountant", "Legal Team Lead", "Lawyer"],
                 name: "role"
             },
             {
@@ -170,24 +131,62 @@ function runInquirer() {
                 message: "What is the first and last name of the employee's manager?",
                 name: "manager"
             }])
-            .then(function(answers) {
-                // Search for manager, grab manager's corresponding ID, then return it 
-                // connection.query("SELECT * FROM top5000 WHERE ?", { song: answer.song }, function(err, res) {
-
-                
-                connection.query("INSERT INTO employee SET ?", //put in other file
-                 {
-                    first_name: answers.firstName,
-                    last_name: answers.lastName,
-                    role_id: answers.role,
-                    manager_id: answers.manager
-                 },
-                 
-             )
-             continuer();
-            })
-    }
-
+            .then(function(answers) { //HOW DO I GET MANAGER ID
+                switch (answers.role) {
+                    case("Sales Lead"):
+                    connection.query('INSERT INTO employee SET ?', {
+                        first_name: answers.firstName,
+                        last_name: answers.lastName,
+                        role_id: 1
+                    })
+                    break;
+                    case ("Salesperson"):
+                        connection.query(
+                            'INSERT INTO employee SET ?', {
+                                first_name: answers.firstName,
+                                last_name: answers.lastName,
+                                role_id: 2
+                            })
+                    break; 
+                    case ('Lead Engineer'):
+                        connection.query('INSERT INTO employee SET ?', {
+                        first_name: answers.firstName,
+                        last_name: answers.lastName,
+                        role_id: 3
+                    })
+                    break;
+                    case ('Software Engineer'):
+                        connection.query('INSERT INTO employee SET ?', {
+                        first_name: answers.firstName,
+                        last_name: answers.lastName,
+                        role_id: 4
+                    })
+                    break;
+                    case ('Accountant'):
+                        connection.query('INSERT INTO employee SET ?', {
+                        first_name: answers.firstName,
+                        last_name: answers.lastName,
+                        role_id: 5
+                    })
+                    break;
+                    case ('Legal Team Lead'):
+                        connection.query('INSERT INTO employee SET ?', {
+                        first_name: answers.firstName,
+                        last_name: answers.lastName,
+                        role_id: 6
+                    })
+                    break;
+                    case ('Lawyer'):
+                            connection.query('INSERT INTO employee SET ?', {
+                            first_name: answers.firstName,
+                            last_name: answers.lastName,
+                            role_id: 7
+                        })
+                        break;
+                    }
+                    continuer();
+                })}
+   
     function addDepartment() {
         inquirer
             .prompt({
@@ -196,22 +195,20 @@ function runInquirer() {
                 message: "Which department would you like to add?",              
             })
             .then(function(deptName) {
-                if (addDepartment == deptName.addDepartment) {
+                if (deptName.addDepartment === deptName.addDepartment) {
                     console.log("You cannot have a duplicate.")
-                    continuer();
+                    continuer(); //IF STATEMENT NOT LETTING ME ACCESS THE OTHER PART
                 }
-
+                if (deptName.addDepartment !== deptName.addDepartment) {
                 connection.query("INSERT INTO department SET ?",
-                 { //add the department
+                 { 
                     name: deptName.addDepartment
                  },
                 )
-                //DISPLAY THE DEPARTMENT NAME
                  console.log("You have added the " + deptName.addDepartment + " department."); 
-                //ASK IF THEY WANT TO CONTINUE
                  continuer();
             
-            })
+            }})
     }
 
     function addRoles() {
@@ -232,33 +229,23 @@ function runInquirer() {
             })
             .then(function(roles) {
                 console.log("You have added the role of " + roles.addRoles + ".");
-                //add the role
+                //ADD ROLE TO DB
                 continuer();
                 })
     }
-
+    
     function updateRoles() {
         inquirer
             .prompt([{
                 type: "list", 
                 message: "Which employee's role would you like to update?",
-                choices: [
-                    //employee name here
-                ],
+                choices: [], //f(x) for getting employee names to display here
                 name: "employeeChoice"
             },
             {
                 type: "list",
                 message: "What would you like to update the employee's role to?",
-                choices: [
-                    "Sales Lead",
-                    "Salesperson",
-                    "Lead Engineer",
-                    "Software Engineer",
-                    "Accountant",
-                    "Legal Team Lead",
-                    "Lawyer"
-                    ],
+                choices: ["Sales Lead", "Salesperson", "Lead Engineer", "Software Engineer", "Accountant", "Legal Team Lead", "Lawyer"],
                 name: "addRoles"
              }])
             .then(function(option) {
@@ -301,9 +288,7 @@ function runInquirer() {
                     name: "continue",
                     type: "list",
                     message: "Would you like to continue?",       
-                    choices: [
-                        "Yes", "No"
-                    ]       
+                    choices: ["Yes", "No"]       
                 })
                 .then(function(choice) {
                     if (choice.continue == "Yes") {

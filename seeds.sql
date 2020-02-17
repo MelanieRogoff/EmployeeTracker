@@ -1,15 +1,8 @@
 USE employee_trackerDB;
-
- -- department, role, and employee tables --
  -- JOIN D, R, E @ ID--
-	-- Sales Lead Role ID: 1 --
-	-- Salesperson Role ID: 2 --
-    -- Lead Engineer Role ID: 3 --
-    -- Software Engineer Role ID: 4 --
-    -- Accountant Role ID: 5 --
-    -- Legal Team Lead Role ID: 6 --
-    -- Lawyer Role ID: 7 --
-    -- Manager ID: 8 --
+	-- Sales Lead ID: 1; Salesperson ID: 2; Lead Engineer ID: 3 --
+    -- Software Engineer ID: 4; Accountant ID: 5; Legal Team Lead ID: 6; 
+    -- Lawyer Role ID: 7; Manager ID: 8 --
  
 -- Insert rows in the Employee table --
 INSERT INTO employee (first_name, last_name, role_id, manager_id)

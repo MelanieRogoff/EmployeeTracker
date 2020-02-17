@@ -1,6 +1,5 @@
 DROP DATABASE IF EXISTS employee_trackerDB;
 CREATE database employee_trackerDB;
-
 USE employee_trackerDB;
 
 CREATE TABLE department (
@@ -25,4 +24,3 @@ CREATE TABLE employee (
     manager_id INT,
 	PRIMARY KEY (id)
 );
-
