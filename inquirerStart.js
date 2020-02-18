@@ -72,7 +72,7 @@ function runInquirer() {
               message: "Which employee would you like to view?",
               choices: [] //Enter employees (in form of a function, maybe?) in the brackets
           })
-          .then(function(answer) {
+          .then(function() {
               //display employee & info
               continuer();
               })
@@ -101,7 +101,7 @@ function runInquirer() {
                 choices: [] //have f(x) that displays the managers?
                 
             })
-            .then(function(viewer) {
+            .then(function() {
                 //PROBABLY DO SELECT * FROM employees WHERE manager_id = ? THEN DISPLAY IT
                 continuer();
               })
