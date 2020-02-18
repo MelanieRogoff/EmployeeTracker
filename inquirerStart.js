@@ -2,7 +2,7 @@ const mysql = require("mysql");
 const inquirer = require("inquirer");
 const consoleTable = require("console.table");
 const connection = mysql.createConnection({
-  host: "localhost",
+host: "localhost",
 
   // Your port; if not 3306
   port: 3306,
@@ -70,7 +70,7 @@ function runInquirer() {
               name: "viewEmployee",
               type: "list",
               message: "Which employee would you like to view?",
-              choices: [] //Have to enter employees (in form of a function, maybe?) in the brackets
+              choices: [] //Enter employees (in form of a function, maybe?) in the brackets
           })
           .then(function(answer) {
               //display employee & info
@@ -131,53 +131,52 @@ function runInquirer() {
                 message: "What is the first and last name of the employee's manager?",
                 name: "manager"
             }])
-            .then(function(answers) { //HOW DO I GET MANAGER ID
+            .then(function(answers) { 
                 switch (answers.role) {
                     case("Sales Lead"):
-                    connection.query('INSERT INTO employee SET ?', {
-                        first_name: answers.firstName,
-                        last_name: answers.lastName,
-                        role_id: 1
-                    })
+                        connection.query('INSERT INTO employee SET ?', {
+                            first_name: answers.firstName,
+                            last_name: answers.lastName,
+                            role_id: 1
+                        })
                     break;
                     case ("Salesperson"):
-                        connection.query(
-                            'INSERT INTO employee SET ?', {
-                                first_name: answers.firstName,
-                                last_name: answers.lastName,
-                                role_id: 2
-                            })
+                        connection.query('INSERT INTO employee SET ?', {
+                            first_name: answers.firstName,
+                            last_name: answers.lastName,
+                            role_id: 2
+                        })
                     break; 
                     case ('Lead Engineer'):
                         connection.query('INSERT INTO employee SET ?', {
-                        first_name: answers.firstName,
-                        last_name: answers.lastName,
-                        role_id: 3
+                            first_name: answers.firstName,
+                            last_name: answers.lastName,
+                            role_id: 3
                     })
                     break;
                     case ('Software Engineer'):
                         connection.query('INSERT INTO employee SET ?', {
-                        first_name: answers.firstName,
-                        last_name: answers.lastName,
-                        role_id: 4
+                            first_name: answers.firstName,
+                            last_name: answers.lastName,
+                            role_id: 4
                     })
                     break;
                     case ('Accountant'):
                         connection.query('INSERT INTO employee SET ?', {
-                        first_name: answers.firstName,
-                        last_name: answers.lastName,
-                        role_id: 5
+                            first_name: answers.firstName,
+                            last_name: answers.lastName,
+                            role_id: 5
                     })
                     break;
                     case ('Legal Team Lead'):
                         connection.query('INSERT INTO employee SET ?', {
-                        first_name: answers.firstName,
-                        last_name: answers.lastName,
-                        role_id: 6
+                            first_name: answers.firstName,
+                            last_name: answers.lastName,
+                            role_id: 6
                     })
                     break;
                     case ('Lawyer'):
-                            connection.query('INSERT INTO employee SET ?', {
+                        connection.query('INSERT INTO employee SET ?', {
                             first_name: answers.firstName,
                             last_name: answers.lastName,
                             role_id: 7
@@ -197,7 +196,7 @@ function runInquirer() {
             .then(function(deptName) {
                 if (deptName.addDepartment === deptName.addDepartment) {
                     console.log("You cannot have a duplicate.")
-                    continuer(); //IF STATEMENT NOT LETTING ME ACCESS THE INSERT PART
+                    continuer();
                 } else {
                 connection.query("INSERT INTO department SET ?",
                   { 
@@ -219,7 +218,7 @@ function runInquirer() {
             })
             .then(function(roles) {
                 console.log("You have added the role of " + roles.addRoles + ".");
-                switch (roles) { 
+                switch (roles.addRoles) { 
                     case("Sales Lead"):
                     connection.query('INSERT INTO role SET ?', {
                         title: roles.addRoles,
