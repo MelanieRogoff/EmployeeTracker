@@ -10,8 +10,8 @@ CREATE TABLE department (
 
 CREATE TABLE role (
 	id INT NOT NULL AUTO_INCREMENT,
-	title VARCHAR(30) NOT NULL,
-    salary DECIMAL(10, 4),
+	title VARCHAR(50) NOT NULL,
+    salary DECIMAL(10, 4) NOT NULL,
     department_id INT NOT NULL, -- hold reference to dept role belongs to --
 	PRIMARY KEY (id)
 );

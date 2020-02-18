@@ -197,17 +197,15 @@ function runInquirer() {
             .then(function(deptName) {
                 if (deptName.addDepartment === deptName.addDepartment) {
                     console.log("You cannot have a duplicate.")
-                    continuer(); //IF STATEMENT NOT LETTING ME ACCESS THE OTHER PART
-                }
-                if (deptName.addDepartment !== deptName.addDepartment) {
+                    continuer(); //IF STATEMENT NOT LETTING ME ACCESS THE INSERT PART
+                } else {
                 connection.query("INSERT INTO department SET ?",
-                 { 
-                    name: deptName.addDepartment
-                 },
+                  { 
+                     name: deptName.addDepartment
+                  },
                 )
-                 console.log("You have added the " + deptName.addDepartment + " department."); 
-                 continuer();
-            
+                console.log("You have added the " + deptName.addDepartment + " department."); 
+                continuer();
             }})
     }
 
@@ -216,23 +214,65 @@ function runInquirer() {
             .prompt({
                 type: "list",
                 message: "Which role would you like to add?",
-                choices: [
-                    "Sales Lead",
-                    "Salesperson",
-                    "Lead Engineer",
-                    "Software Engineer",
-                    "Accountant",
-                    "Legal Team Lead",
-                    "Lawyer"
-                ],
+                choices: ["Sales Lead", "Salesperson", "Lead Engineer", "Software Engineer", "Accountant", "Legal Team Lead", "Lawyer"],
                 name: "addRoles"
             })
             .then(function(roles) {
                 console.log("You have added the role of " + roles.addRoles + ".");
-                //ADD ROLE TO DB
-                continuer();
-                })
-    }
+                switch (roles) { 
+                    case("Sales Lead"):
+                    connection.query('INSERT INTO role SET ?', {
+                        title: roles.addRoles,
+                        salary: 30000,
+                        department_id: 1
+                    })
+                    break;
+                    case ("Salesperson"):
+                        connection.query(
+                        'INSERT INTO role SET ?', {
+                            title: roles.addRoles,
+                            salary: 31000,
+                            department_id: 1
+                        })
+                    break; 
+                    case ('Lead Engineer'):
+                        connection.query('INSERT INTO role SET ?', {
+                            title: roles.addRoles,
+                            salary: 90000,
+                            department_id: 2
+                    })
+                    break;
+                    case ('Software Engineer'):
+                        connection.query('INSERT INTO role SET ?', {
+                            title: roles.addRoles,
+                            salary: 80000,
+                            department_id: 2
+                    })
+                    break;
+                    case ('Accountant'):
+                        connection.query('INSERT INTO role SET ?', {
+                            title: roles.addRoles,
+                            salary: 60000,
+                            department_id: 3
+                    })
+                    break;
+                    case ('Legal Team Lead'):
+                        connection.query('INSERT INTO role SET ?', {
+                            title: roles.addRoles,
+                            salary: 70000,
+                            department_id: 4
+                    })
+                    break;
+                    case ('Lawyer'):
+                            connection.query('INSERT INTO role SET ?', {
+                                title: roles.addRoles,
+                                salary: 100000,
+                                department_id: 4
+                        })
+                        break;
+                    }
+                    continuer();
+                })}
     
     function updateRoles() {
         inquirer
