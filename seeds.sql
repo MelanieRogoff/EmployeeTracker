@@ -1,8 +1,4 @@
 USE employee_trackerDB;
- -- JOIN D, R, E @ ID--
-	-- Sales Lead ID: 1; Salesperson ID: 2; Lead Engineer ID: 3 --
-    -- Software Engineer ID: 4; Accountant ID: 5; Legal Team Lead ID: 6; 
-    -- Lawyer Role ID: 7; Manager ID: 8 --
  
 -- Insert rows in the Employee table --
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
@@ -57,5 +53,4 @@ VALUES ("Legal Team Lead", 64000, 4);
 INSERT INTO role (title, salary, department_id)
 VALUES ("Lawyer", 150000, 4);
 
-SELECT * FROM employee;
 
