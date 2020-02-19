@@ -65,18 +65,24 @@ function runInquirer() {
       });
   }
     function viewEmployee() {
-      inquirer
-          .prompt({
+        connection.query("SELECT first_name, last_name FROM employee INNER JOIN role ON role.department_id = department_id", function (err, results) {
+            const choices = results.map(result => `${result.first_name} ${result.last_name}`); //f(x) looks at  results array,turns it into string of first & last name FOR EACH ITEM IN ARRAY. Result = arbitrary param. 
+            inquirer
+             .prompt({
               name: "viewEmployee",
               type: "list",
               message: "Which employee would you like to view?",
-              choices: [] //Enter employees (in form of a function, maybe?) in the brackets
+              choices //call the choices const here
           })
-          .then(function() {
-              //display employee & info
+          .then(function(employee) {
+              console.log(employee); //this does {viewEmployee: the employee's name}
+              //Need to go thru list of results and display the specific info from that employee
               continuer();
               })
   }
+        )}
+
+      
 
     function viewDepartment() {
       inquirer
@@ -130,62 +136,87 @@ function addEmployee() {
                 type: "input",
                 message: "What is the first and last name of the employee's manager?",
                 name: "manager"
-            }])
-            .then(function(answers) { 
+            }
+            ])
+            .then(function(answers) {
+                return new Promise((resolve, reject) => { //this is a JS function that is a promise
+                //QUERY FOR MANAGER BEFORE EVERYTHING BECAUSE WE WANT TO GRAB MANAGER FOR EACH 
+                 const [first_name, last_name] = answers.manager.split(" "); //[first, last] means we want to create new const of first and last -- deliminates the need to make const first and const last
+                 connection.query("SELECT id FROM employee WHERE first_name = ? AND last_name = ?", [first_name, last_name], function (err, results) {
+                     if (err) reject (err); //If error, reject
+                     if (results.length === 0) { //If no results 
+                        resolve({answers, manager_id: null,}) //show that manager_id is null
+                        console.log(`Error, ${answers.manager} does not exist.`) //This lets the user know that manager cannot exist UNLESS they've been added as employee
+                        return; 
+                     }
+                     resolve({answers, manager_id: results[0].id}); //this returns manager's ID. Resolve is part of the syntax. Calling resolve ends up with the next .then function executing. We can .then off this promise, and it will ONLY work once this has been resolved. 
+                 })
+                });      
+            }) 
+            .then(function({answers, manager_id}) { 
+            //grab manager's ID
                 switch (answers.role) {
                     case("Sales Lead"):
                         connection.query('INSERT INTO employee SET ?', {
                             first_name: answers.firstName,
                             last_name: answers.lastName,
-                            role_id: 1
+                            role_id: 1,
+                            manager_id //don't need to add specific value because it's going to assign a manager id
                         })
-                        connection.query("SELECT manager_id FROM employee WHERE ?")
                     break;
                     case ("Salesperson"):
                         connection.query('INSERT INTO employee SET ?', {
                             first_name: answers.firstName,
                             last_name: answers.lastName,
-                            role_id: 2
+                            role_id: 2,
+                            manager_id
                         })
                     break; 
                     case ('Lead Engineer'):
                         connection.query('INSERT INTO employee SET ?', {
                             first_name: answers.firstName,
                             last_name: answers.lastName,
-                            role_id: 3
+                            role_id: 3,
+                            manager_id
                     })
                     break;
                     case ('Software Engineer'):
                         connection.query('INSERT INTO employee SET ?', {
                             first_name: answers.firstName,
                             last_name: answers.lastName,
-                            role_id: 4
+                            role_id: 4,
+                            manager_id
                     })
                     break;
                     case ('Accountant'):
                         connection.query('INSERT INTO employee SET ?', {
                             first_name: answers.firstName,
                             last_name: answers.lastName,
-                            role_id: 5
+                            role_id: 5,
+                            manager_id
                     })
                     break;
                     case ('Legal Team Lead'):
                         connection.query('INSERT INTO employee SET ?', {
                             first_name: answers.firstName,
                             last_name: answers.lastName,
-                            role_id: 6
+                            role_id: 6,
+                            manager_id
                     })
                     break;
                     case ('Lawyer'):
                         connection.query('INSERT INTO employee SET ?', {
                             first_name: answers.firstName,
                             last_name: answers.lastName,
-                            role_id: 7
+                            role_id: 7,
+                            manager_id
                         })
                         break;
                 }
                     continuer();
-                })}
+                }).catch(function(error) {
+                    console.error(error);
+            })}
    
     function addDepartment() {
         inquirer
@@ -194,20 +225,16 @@ function addEmployee() {
                 type: "input",
                 message: "Which department would you like to add?",              
             })
-            .then(function(deptName) {
-                if (deptName.addDepartment === deptName.addDepartment) {
-                    console.log("You cannot have a duplicate.")
-                    continuer();
-                } else {
-                connection.query("INSERT INTO department SET ?",
-                  { 
-                     name: deptName.addDepartment
-                  },
-                )
-                console.log("You have added the " + deptName.addDepartment + " department."); 
-                continuer();
-            }})
-    }
+            .then(function(deptName) {        
+                connection.query("INSERT INTO department SET ?",{ name: deptName.addDepartment}, function(err) {
+                        if (err) {
+                            console.log(err.sqlMessage);
+                        } else {
+                            console.log("You have added the " + deptName.addDepartment + " department."); 
+                        }
+                        continuer();
+                    })
+                })}
 
     function addRoles() {
         inquirer
