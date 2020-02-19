@@ -65,7 +65,7 @@ function runInquirer() {
       });
   }
     function viewEmployee() {
-        connection.query("SELECT first_name, last_name FROM employee INNER JOIN role ON role.department_id = department_id", function (err, results) {
+        connection.query("SELECT * FROM employee JOIN role ON role.department_id = employee.role_id ", function (err, results) {
             const choices = results.map(result => `${result.first_name} ${result.last_name}`); //f(x) looks at  results array,turns it into string of first & last name FOR EACH ITEM IN ARRAY. Result = arbitrary param. 
             inquirer
              .prompt({
@@ -75,14 +75,14 @@ function runInquirer() {
               choices //call the choices const here
           })
           .then(function(employee) {
-              console.log(employee); //this does {viewEmployee: the employee's name}
+              console.log(employee.results); 
+              connection.query("SELECT first_name, last_name FROM employee FULL OUTER JOIN role ON role.department_id = department_id", {
+              })
               //Need to go thru list of results and display the specific info from that employee
               continuer();
               })
   }
         )}
-
-      
 
     function viewDepartment() {
       inquirer
@@ -139,17 +139,16 @@ function addEmployee() {
             }
             ])
             .then(function(answers) {
-                return new Promise((resolve, reject) => { //this is a JS function that is a promise
-                //QUERY FOR MANAGER BEFORE EVERYTHING BECAUSE WE WANT TO GRAB MANAGER FOR EACH 
-                 const [first_name, last_name] = answers.manager.split(" "); //[first, last] means we want to create new const of first and last -- deliminates the need to make const first and const last
+                return new Promise((resolve, reject) => { 
+                 const [first_name, last_name] = answers.manager.split(" "); //[first, last] creates const of both 
                  connection.query("SELECT id FROM employee WHERE first_name = ? AND last_name = ?", [first_name, last_name], function (err, results) {
                      if (err) reject (err); //If error, reject
-                     if (results.length === 0) { //If no results 
+                     if (results.length === 0) { //If no results, 
                         resolve({answers, manager_id: null,}) //show that manager_id is null
-                        console.log(`Error, ${answers.manager} does not exist.`) //This lets the user know that manager cannot exist UNLESS they've been added as employee
+                        console.log(`Error, ${answers.manager} does not exist.`) //and that manager doesn't exist
                         return; 
                      }
-                     resolve({answers, manager_id: results[0].id}); //this returns manager's ID. Resolve is part of the syntax. Calling resolve ends up with the next .then function executing. We can .then off this promise, and it will ONLY work once this has been resolved. 
+                     resolve({answers, manager_id: results[0].id}); //this returns manager's ID. Resolve=part of syntax. We .then off this promise -- ONLY work once this has been resolved. 
                  })
                 });      
             }) 

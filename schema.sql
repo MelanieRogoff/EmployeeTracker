@@ -28,4 +28,4 @@ CREATE TABLE employee (
     FOREIGN KEY (manager_id) REFERENCES employee (id)
 );
 
-SELECT * FROM employee
+SELECT * FROM employee JOIN role ON role.department_id = employee.role_id JOIN department on role.department_id = department.id;
