@@ -34,12 +34,12 @@ function runInquirer() {
             viewEmployee(); 
             break;
 
-        case "View Employees By Departments":
+        case "View Employees By Departments (Alphabetical)":
             viewDepartment();
             break;
   
-        case "View All Employees By Manager":
-            viewManagers();
+        case "View All Employees By Role (Alphabetical)":
+            viewRole();
             break;
   
         case "Add Employee":
@@ -76,8 +76,7 @@ function runInquirer() {
             }
                 console.table(allEmps)
                 continuer();
-        }
-        )
+        })
     }
 //VIEWING EMPLOYEES BY DEPARTMENT
     function viewDepartment() {
@@ -90,7 +89,9 @@ function runInquirer() {
           })
           .then(function(answers) {
             const queryDept = 'SELECT department.name, employee.role_id, employee.first_name, employee.last_name FROM employee INNER JOIN department ON (employee.role_id = department.id) WHERE department.name = ?';
+
             let deptTable = [];
+
             connection.query(queryDept, [answers.viewDepartment], function (err, res) {
                 for (let i = 0; i < res.length; i++) {
                     deptTable.push({first_name: res[i].first_name, last_name: res[i].last_name, department: res[i].name})
@@ -101,134 +102,132 @@ function runInquirer() {
         })
 }
         
-//VIEWING EMPLOYEES BY MANAGERS
-    function viewManagers() {
-        inquirer
-            .prompt({
-                name: "viewManager",
-                type: "list",
-                message: "Which manager would you like to have the employees sorted by?",
-                choices: [] //have f(x) that displays the managers?
-                
-            })
-            .then(function() {
-                //PROBABLY DO SELECT * FROM employees WHERE manager_id = ? THEN DISPLAY IT
-                continuer();
-              })
+//VIEWING EMPLOYEES BY ROLE
+    function viewRole() {
+        const query = 'SELECT role.title, first_name, last_name FROM employee INNER JOIN role ON employee.role_id = role.id ORDER BY role.title'
+    
+        let roleList = []
+        connection.query(query, function (err, res) {
+            for (let i = 0; i < res.length; i++) {
+                roleList.push({ Roles: res[i].title, First_Name: res[i].first_name, Last_Name: res[i].last_name })
             }
+        console.table(roleList);
+        continuer()
+    })
+}
 
 //ADDING EMPLOYEES
 function addEmployee() {
     inquirer
-            .prompt([
-            {
-                type: "input",
-                message: "What is the employee's first name?",
-                name: "firstName"
-            },
-            {  
-                type: "input",
-                message: "What is the employee's last name?",
-                name: "lastName"
-            },
-            {
-                type: "list",
-                message: "What is the employee's role?",
-                choices: ["Sales Lead", "Salesperson", "Lead Engineer", "Software Engineer", "Accountant", "Legal Team Lead", "Lawyer"],
-                name: "role"
-            },
-            {
-                type: "input",
-                message: "What is the first and last name of the employee's manager?",
-                name: "manager"
-            }
-            ])
-            .then(function(answers) {
-                return new Promise((resolve, reject) => { 
-                 const [first_name, last_name] = answers.manager.split(" "); //[first, last] creates const of both 
-                 connection.query("SELECT id FROM employee WHERE first_name = ? AND last_name = ?", [first_name, last_name], function (err, results) {
-                     if (err) reject (err); //If error, reject
-                     if (results.length === 0) { //If no results, 
-                        resolve({answers, manager_id: null,}) //show that manager_id is null
-                        console.log(`Error, ${answers.manager} does not exist.`) //and that manager doesn't exist
-                        return; 
-                     }
-                     resolve({answers, getManaged: answers.manager, manager_id: results[0].id}); //this returns manager's ID. Resolve=part of syntax. We .then off this promise -- ONLY work once this has been resolved. 
-                 })
-                });      
-            }) 
-            .then(function({answers, manager_id, getManaged}) { 
-            //grab manager's ID
-                switch (answers.role) {
-                    case("Sales Lead"):
-                        connection.query('INSERT INTO employee SET ?', {
-                            first_name: answers.firstName,
-                            last_name: answers.lastName,
-                            role_id: 1,
-                            manager_id, //don't need to add specific value b/c it assigns manager id
-                            manager: getManaged
-                        })
-                    break;
-                    case ("Salesperson"):
-                        connection.query('INSERT INTO employee SET ?', {
-                            first_name: answers.firstName,
-                            last_name: answers.lastName,
-                            role_id: 2,
-                            manager_id,
-                            getManaged
-                        })
-                    break; 
-                    case ('Lead Engineer'):
-                        connection.query('INSERT INTO employee SET ?', {
-                            first_name: answers.firstName,
-                            last_name: answers.lastName,
-                            role_id: 3,
-                            manager_id,
-                            manager: getManaged
-                    })
-                    break;
-                    case ('Software Engineer'):
-                        connection.query('INSERT INTO employee SET ?', {
-                            first_name: answers.firstName,
-                            last_name: answers.lastName,
-                            role_id: 4,
-                            manager_id,
-                            manager: getManaged
-                    })
-                    break;
-                    case ('Accountant'):
-                        connection.query('INSERT INTO employee SET ?', {
-                            first_name: answers.firstName,
-                            last_name: answers.lastName,
-                            role_id: 5,
-                            manager_id,
-                            manager: getManaged
-                    })
-                    break;
-                    case ('Legal Team Lead'):
-                        connection.query('INSERT INTO employee SET ?', {
-                            first_name: answers.firstName,
-                            last_name: answers.lastName,
-                            role_id: 6,
-                            manager_id,
-                            manager: getManaged
-                    })
-                    break;
-                    case ('Lawyer'):
-                        connection.query('INSERT INTO employee SET ?', {
-                            first_name: answers.firstName,
-                            last_name: answers.lastName,
-                            role_id: 7,
-                            manager_id,
-                            manager: getManaged
-                        })
-                        break;
+        .prompt([
+        {
+            type: "input",
+            message: "What is the employee's first name?",
+            name: "firstName"
+        },
+        {  
+            type: "input",
+            message: "What is the employee's last name?",
+            name: "lastName"
+        },
+        {
+            type: "list",
+            message: "What is the employee's role?",
+            choices: ["Sales Lead", "Salesperson", "Lead Engineer", "Software Engineer", "Accountant", "Legal Team Lead", "Lawyer"],
+            name: "role"
+        },
+        {
+            type: "input",
+            message: "What is the first and last name of the employee's manager?",
+            name: "manager"
+        }
+        ])
+        .then(function(answers) {
+            return new Promise((resolve, reject) => { 
+                const [first_name, last_name] = answers.manager.split(" "); //[first, last] creates const of both 
+                connection.query("SELECT id FROM employee WHERE first_name = ? AND last_name = ?", [first_name, last_name], function (err, results) {
+                if (err) reject (err); //If error, reject
+                if (results.length === 0) { //If no results, 
+                    resolve({answers, mgmt: null,}) //show that manager_id is null
+                    console.log(`Error, ${answers.manager} does not exist.`) 
+                    return; 
                 }
-                    continuer();
+                    resolve({answers, getManaged: answers.manager, mgmt: results[0].id});  
+                })
+            });      
+        }) 
+        .then(function({answers, mgmt, getManaged}) { 
+            switch (answers.role) {
+                case("Sales Lead"):
+                    connection.query('INSERT INTO employee SET ?', {
+                        first_name: answers.firstName,
+                        last_name: answers.lastName,
+                        role_id: 1,
+                        manager_id: mgmt,
+                        manager: getManaged
+                    })
+                break;
+                case ("Salesperson"):
+                    connection.query('INSERT INTO employee SET ?', {
+                        first_name: answers.firstName,
+                        last_name: answers.lastName,
+                        role_id: 2,
+                        manager_id: mgmt,
+                        manager: getManaged
+                    })
+                break; 
+                case ('Lead Engineer'):
+                    connection.query('INSERT INTO employee SET ?', {
+                        first_name: answers.firstName,
+                        last_name: answers.lastName,
+                        role_id: 3,
+                        manager_id: mgmt,
+                        manager: getManaged
+                })
+                break;
+                case ('Software Engineer'):
+                    connection.query('INSERT INTO employee SET ?', {
+                        first_name: answers.firstName,
+                        last_name: answers.lastName,
+                        role_id: 4,
+                        manager_id: mgmt,
+                        manager: getManaged
+                })
+                break;
+                case ('Accountant'):
+                    connection.query('INSERT INTO employee SET ?', {
+                        first_name: answers.firstName,
+                        last_name: answers.lastName,
+                        role_id: 5,
+                        manager_id: mgmt,
+                        manager: getManaged
+                })
+                break;
+                case ('Legal Team Lead'):
+                    connection.query('INSERT INTO employee SET ?', {
+                        first_name: answers.firstName,
+                        last_name: answers.lastName,
+                        role_id: 6,
+                        manager_id: mgmt,
+                        manager: getManaged
+                })
+                break;
+                case ('Lawyer'):
+                    connection.query('INSERT INTO employee SET ?', {
+                        first_name: answers.firstName,
+                        last_name: answers.lastName,
+                        role_id: 7,
+                        manager_id: mgmt,
+                        manager: getManaged
+                    })
+                    break;
+                }
+                continuer();
                 }).catch(function(error) {
                     console.error(error);
-            })}
-   
+                })}
+
+//ADD DEPARTMENTS
     function addDepartment() {
         inquirer
             .prompt({
@@ -246,7 +245,7 @@ function addEmployee() {
                         continuer();
                     })
                 })}
-
+//ADD EMPLOYEE ROLES 
     function addRoles() {
         inquirer
             .prompt({
@@ -318,13 +317,20 @@ function addEmployee() {
                     }
                     continuer();
                 })}
-    
-    function updateRoles() {
+
+//UPDATE EMPLOYEE ROLES
+    function updateRoles() {   
+        connection.query("SELECT * FROM employee", function (err, res) {
+            let updates = [];
+            for (let i = 0; i < res.length; i++) {
+                const choices = res[i].first_name + " " + res[i].last_name;
+                updates.push(choices);
+            }
         inquirer
             .prompt([{
                 type: "list", 
                 message: "Which employee's role would you like to update?",
-                choices: [], //f(x) for getting employee names to display here
+                choices: updates,
                 name: "employeeChoice"
             },
             {
@@ -335,36 +341,36 @@ function addEmployee() {
              }])
             .then(function(option) {
                 if (option.addRoles == "Sales Lead") {
-                    console.log ("INSERT EMPLOYEE NAME HERE is now a " + option.addRoles)
+                    console.log (option.employeeChoice + " is now a " + option.addRoles + ".")
                     //return view of employee with the new option
                 }
                 if (option.addRoles == "Salesperson") {
-                    console.log ("INSERT EMPLOYEE NAME HERE is now a " + option.addRoles)
+                    console.log (option.employeeChoice + " is now a " + option.addRoles + ".")
                     //return view of employee with the new option
                 }
                 if (option.addRoles == "Lead Engineer") {
-                    console.log ("INSERT EMPLOYEE NAME HERE is now a " + option.addRoles)
+                    console.log (option.employeeChoice + " is now a " + option.addRoles + ".")
                     //return view of employee with the new option
                 }
                 if (option.addRoles == "Software Engineer") {
-                    console.log ("INSERT EMPLOYEE NAME HERE is now a " + option.addRoles)
+                    console.log (option.employeeChoice + " is now a " + option.addRoles + ".")
                     //return view of employee with the new option
                 }
                 if (option.addRoles == "Accountant") {
-                    console.log ("INSERT EMPLOYEE NAME HERE is now a " + option.addRoles)
+                    console.log (option.employeeChoice + " is now a " + option.addRoles + ".")
                     //return view of employee with the new option
                 }
                 if (option.addRoles == "Legal Team Lead") {
-                    console.log ("INSERT EMPLOYEE NAME HERE is now a " + option.addRoles)
+                    console.log (option.employeeChoice + " is now a " + option.addRoles + ".")
                     //return view of employee with the new option
                 }
                 if (option.addRoles == "Lawyer") {
-                    console.log ("INSERT EMPLOYEE NAME HERE is now a " + option.addRoles)
+                    console.log (option.employeeChoice + " is now a " + option.addRoles + ".")
                     //return view of employee with the new option
                 }
                 continuer();
                 })
-    }
+    })}
   
 
     function continuer() {
