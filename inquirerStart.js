@@ -88,16 +88,16 @@ function runInquirer() {
               message: "Which department would you like to sort employees by?",
               choices: ["Sales", "Engineering", "Finance", "Legal"]
           })
-          .then(function() {
-            const queryDept = 'SELECT department.name, employee.role_id, employee.first_name, employee.last_name FROM employee INNER JOIN department ON (employee.role_id = department.id) WHERE (department.name = ?)';
+          .then(function(answers) {
+            const queryDept = 'SELECT department.name, employee.role_id, employee.first_name, employee.last_name FROM employee INNER JOIN department ON (employee.role_id = department.id) WHERE department.name = ?';
             let deptTable = [];
-            connection.query(queryDept, function (err, res) {
+            connection.query(queryDept, [answers.viewDepartment], function (err, res) {
                 for (let i = 0; i < res.length; i++) {
                     deptTable.push({first_name: res[i].first_name, last_name: res[i].last_name, department: res[i].name})
                 }
                 console.table(deptTable);
+                continuer();
             })
-            continuer();
         })
 }
         
