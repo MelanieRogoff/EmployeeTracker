@@ -64,26 +64,22 @@ function runInquirer() {
         }
       });
   }
+//VIEW ALL EMPLOYEES
     function viewEmployee() {
-        connection.query("SELECT * FROM employee JOIN role ON role.department_id = employee.role_id ", function (err, results) {
-            const choices = results.map(result => `${result.first_name} ${result.last_name}`); //f(x) looks at  results array,turns it into string of first & last name FOR EACH ITEM IN ARRAY. Result = arbitrary param. 
-            inquirer
-             .prompt({
-              name: "viewEmployee",
-              type: "list",
-              message: "Which employee would you like to view?",
-              choices //call the choices const here
-          })
-          .then(function(employee) {
-              console.log(employee.results); 
-              connection.query("SELECT first_name, last_name FROM employee FULL OUTER JOIN role ON role.department_id = department_id", {
-              })
-              //Need to go thru list of results and display the specific info from that employee
-              continuer();
-              })
-  }
-        )}
+        const query = 'SELECT * FROM ((employee INNER JOIN role ON employee.role_id = role.id) INNER JOIN department ON role.department_id = department.id)';
 
+        let allEmps = []
+        
+        connection.query(query, function (err, res) {
+            for (let i = 0; i < res.length; i++) {
+                allEmps.push({ id: res[i].id, first_name: res[i].first_name, last_name: res[i].last_name, title: res[i].title, salary: res[i].salary, manager: res[i].manager, department: res[i].name})
+            }
+                console.table(allEmps)
+                continuer();
+        }
+        )
+    }
+//VIEWING EMPLOYEES BY DEPARTMENT
     function viewDepartment() {
       inquirer
           .prompt({
@@ -93,11 +89,19 @@ function runInquirer() {
               choices: ["Sales", "Engineering", "Finance", "Legal"]
           })
           .then(function() {
-            //PROBABLY DO SELECT * FROM employees WHERE department = ? THEN DISPLAY IT
+            const queryDept = 'SELECT department.name, employee.role_id, employee.first_name, employee.last_name FROM employee INNER JOIN department ON (employee.role_id = department.id) WHERE (department.name = ?)';
+            let deptTable = [];
+            connection.query(queryDept, function (err, res) {
+                for (let i = 0; i < res.length; i++) {
+                    deptTable.push({first_name: res[i].first_name, last_name: res[i].last_name, department: res[i].name})
+                }
+                console.table(deptTable);
+            })
             continuer();
-          })
-        }
-
+        })
+}
+        
+//VIEWING EMPLOYEES BY MANAGERS
     function viewManagers() {
         inquirer
             .prompt({
@@ -113,6 +117,7 @@ function runInquirer() {
               })
             }
 
+//ADDING EMPLOYEES
 function addEmployee() {
     inquirer
             .prompt([
@@ -148,11 +153,11 @@ function addEmployee() {
                         console.log(`Error, ${answers.manager} does not exist.`) //and that manager doesn't exist
                         return; 
                      }
-                     resolve({answers, manager_id: results[0].id}); //this returns manager's ID. Resolve=part of syntax. We .then off this promise -- ONLY work once this has been resolved. 
+                     resolve({answers, getManaged: answers.manager, manager_id: results[0].id}); //this returns manager's ID. Resolve=part of syntax. We .then off this promise -- ONLY work once this has been resolved. 
                  })
                 });      
             }) 
-            .then(function({answers, manager_id}) { 
+            .then(function({answers, manager_id, getManaged}) { 
             //grab manager's ID
                 switch (answers.role) {
                     case("Sales Lead"):
@@ -160,7 +165,8 @@ function addEmployee() {
                             first_name: answers.firstName,
                             last_name: answers.lastName,
                             role_id: 1,
-                            manager_id //don't need to add specific value because it's going to assign a manager id
+                            manager_id, //don't need to add specific value b/c it assigns manager id
+                            manager: getManaged
                         })
                     break;
                     case ("Salesperson"):
@@ -168,7 +174,8 @@ function addEmployee() {
                             first_name: answers.firstName,
                             last_name: answers.lastName,
                             role_id: 2,
-                            manager_id
+                            manager_id,
+                            getManaged
                         })
                     break; 
                     case ('Lead Engineer'):
@@ -176,7 +183,8 @@ function addEmployee() {
                             first_name: answers.firstName,
                             last_name: answers.lastName,
                             role_id: 3,
-                            manager_id
+                            manager_id,
+                            manager: getManaged
                     })
                     break;
                     case ('Software Engineer'):
@@ -184,7 +192,8 @@ function addEmployee() {
                             first_name: answers.firstName,
                             last_name: answers.lastName,
                             role_id: 4,
-                            manager_id
+                            manager_id,
+                            manager: getManaged
                     })
                     break;
                     case ('Accountant'):
@@ -192,7 +201,8 @@ function addEmployee() {
                             first_name: answers.firstName,
                             last_name: answers.lastName,
                             role_id: 5,
-                            manager_id
+                            manager_id,
+                            manager: getManaged
                     })
                     break;
                     case ('Legal Team Lead'):
@@ -200,7 +210,8 @@ function addEmployee() {
                             first_name: answers.firstName,
                             last_name: answers.lastName,
                             role_id: 6,
-                            manager_id
+                            manager_id,
+                            manager: getManaged
                     })
                     break;
                     case ('Lawyer'):
@@ -208,7 +219,8 @@ function addEmployee() {
                             first_name: answers.firstName,
                             last_name: answers.lastName,
                             role_id: 7,
-                            manager_id
+                            manager_id,
+                            manager: getManaged
                         })
                         break;
                 }

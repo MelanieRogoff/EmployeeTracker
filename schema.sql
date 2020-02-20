@@ -23,9 +23,9 @@ CREATE TABLE employee (
     last_name VARCHAR(30) NOT NULL,
     role_id INT NOT NULL,
     manager_id INT,
+    manager VARCHAR(40) NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (role_id) REFERENCES role (id),
     FOREIGN KEY (manager_id) REFERENCES employee (id)
 );
 
-SELECT * FROM employee JOIN role ON role.department_id = employee.role_id JOIN department on role.department_id = department.id;
