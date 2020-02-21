@@ -30,4 +30,3 @@ CREATE TABLE employee (
 );
 
 SELECT role.title, first_name, last_name FROM employee INNER JOIN role ON employee.role_id = role.id ORDER BY role.title;
-

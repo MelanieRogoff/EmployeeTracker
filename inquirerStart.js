@@ -340,51 +340,53 @@ function addEmployee() {
                 name: "addRoles"
              }])
             .then(function(option) {
-                if (option.addRoles == "Sales Lead") {
-                return new Promise((resolve, reject) => {
-                const updateSales = `UPDATE role SET title = ${option.addRoles} WHERE name = ${option.employeeChoice}`;
-                 connection.query(updateSales, function (err, res) {
-                  if (err) reject(err); //If error, reject
-                  resolve(option)
-                  console.log(option, "RESOLVER")
-                  .then(function (option) {
-                      console.log(option);
-                      connection.query(`SELECT * FROM employee WHERE name = ${option.employeeChoice}`, function (err, res) {
-                          console.log(res);
-                        })
+                console.log(`You have changed ${option.employeeChoice}'s role to: ${option.addRoles}.`);
+                switch(option.addRoles) {
+                    case("Sales Lead"):
+                    connection.query(`UPDATE employee LEFT JOIN role ON role.id = employee.role_id SET title = '${option.addRoles}' WHERE ?`, {
+                        role_id: 1
                     })
-          })
-          
-        
-                
-                if (option.addRoles == "Salesperson") {
-                    console.log (option.employeeChoice + " is now a " + option.addRoles + ".")
-                    //return view of employee with the new option
-                }
-                if (option.addRoles == "Lead Engineer") {
-                    console.log (option.employeeChoice + " is now a " + option.addRoles + ".")
-                    //return view of employee with the new option
-                }
-                if (option.addRoles == "Software Engineer") {
-                    console.log (option.employeeChoice + " is now a " + option.addRoles + ".")
-                    //return view of employee with the new option
-                }
-                if (option.addRoles == "Accountant") {
-                    console.log (option.employeeChoice + " is now a " + option.addRoles + ".")
-                    //return view of employee with the new option
-                }
-                if (option.addRoles == "Legal Team Lead") {
-                    console.log (option.employeeChoice + " is now a " + option.addRoles + ".")
-                    //return view of employee with the new option
-                }
-                if (option.addRoles == "Lawyer") {
-                    console.log (option.employeeChoice + " is now a " + option.addRoles + ".")
-                    //return view of employee with the new option
+                    connection.query(`SELECT role.title, first_name, last_name FROM employee INNER JOIN role ON employee.role_id = role.id`)
+                    break;
+                    case("Salesperson"):
+                    connection.query(`UPDATE employee LEFT JOIN role ON role.id = employee.role_id SET title = '${option.addRoles}' WHERE ?`, {
+                        role_id: 2
+                    })
+                    connection.query(`SELECT role.title, first_name, last_name FROM employee INNER JOIN role ON employee.role_id = role.id`)
+                    break;
+                    case("Lead Engineer"):
+                    connection.query(`UPDATE employee LEFT JOIN role ON role.id = employee.role_id SET title = '${option.addRoles}' WHERE ?`, {
+                        role_id: 3
+                    })
+                    connection.query(`SELECT role.title, first_name, last_name FROM employee INNER JOIN role ON employee.role_id = role.id`)
+                    break;
+                    case("Software Engineer"):
+                    connection.query(`UPDATE employee LEFT JOIN role ON role.id = employee.role_id SET title = '${option.addRoles}' WHERE ?`, {
+                        role_id: 4
+                    })
+                    connection.query(`SELECT role.title, first_name, last_name FROM employee INNER JOIN role ON employee.role_id = role.id`)
+                    break;
+                    case("Accountant"):
+                    connection.query(`UPDATE employee LEFT JOIN role ON role.id = employee.role_id SET title = '${option.addRoles}' WHERE ?`, {
+                        role_id: 5
+                    })
+                    connection.query(`SELECT role.title, first_name, last_name FROM employee INNER JOIN role ON employee.role_id = role.id`)
+                    break;
+                    case("Legal Team Lead"):
+                    connection.query(`UPDATE employee LEFT JOIN role ON role.id = employee.role_id SET title = '${option.addRoles}' WHERE ?`, {
+                        role_id: 6
+                    })
+                    connection.query(`SELECT role.title, first_name, last_name FROM employee INNER JOIN role ON employee.role_id = role.id`)
+                    break;
+                    case("Lawyer"):
+                    connection.query(`UPDATE employee LEFT JOIN role ON role.id = employee.role_id SET title = '${option.addRoles}' WHERE ?`, {
+                        role_id: 7
+                    })
+                    connection.query(`SELECT role.title, first_name, last_name FROM employee INNER JOIN role ON employee.role_id = role.id`)
+                    break;
                 }
                 continuer();
-                })
-            }})})}
-  
+            })})}
 
     function continuer() {
         inquirer
@@ -403,3 +405,4 @@ function addEmployee() {
                     }
                 })
     }
+
