@@ -26,7 +26,7 @@ function runInquirer() {
         name: "action",
         type: "list",
         message: "What would you like to do?",
-        choices: ["View All Employees", "View Employees By Departments", "View All Employees By Role", "Add Employee", "Add Departments", "Add Roles", "Update Employee Roles", "Exit"]
+        choices: ["View All Employees", "View Employees By Departments (Alphabetical)", "View All Employees By Role (Alphabetical)", "Add Employee", "Add Departments", "Add Roles", "Update Employee Roles", "Exit"]
       })
       .then(function(answer) {
         switch (answer.action) {
@@ -93,6 +93,7 @@ function runInquirer() {
             let deptTable = [];
 
             connection.query(queryDept, [answers.viewDepartment], function (err, res) {
+                console.log(`There are ${res.length} employees in this department.`)
                 for (let i = 0; i < res.length; i++) {
                     deptTable.push({first_name: res[i].first_name, last_name: res[i].last_name, department: res[i].name})
                 }
@@ -104,9 +105,8 @@ function runInquirer() {
         
 //VIEWING EMPLOYEES BY ROLE
     function viewRole() {
-        const query = 'SELECT role.title, first_name, last_name FROM employee INNER JOIN role ON employee.role_id = role.id ORDER BY role.title'
-    
-        let roleList = []
+        const query = 'SELECT role.title, first_name, last_name FROM employee INNER JOIN role ON employee.role_id = role.id ORDER BY role.title';
+        let roleList = [];
         connection.query(query, function (err, res) {
             for (let i = 0; i < res.length; i++) {
                 roleList.push({ Roles: res[i].title, First_Name: res[i].first_name, Last_Name: res[i].last_name })
@@ -341,9 +341,22 @@ function addEmployee() {
              }])
             .then(function(option) {
                 if (option.addRoles == "Sales Lead") {
-                    console.log (option.employeeChoice + " is now a " + option.addRoles + ".")
-                    //return view of employee with the new option
-                }
+                return new Promise((resolve, reject) => {
+                const updateSales = `UPDATE role SET title = ${option.addRoles} WHERE name = ${option.employeeChoice}`;
+                 connection.query(updateSales, function (err, res) {
+                  if (err) reject(err); //If error, reject
+                  resolve(option)
+                  console.log(option, "RESOLVER")
+                  .then(function (option) {
+                      console.log(option);
+                      connection.query(`SELECT * FROM employee WHERE name = ${option.employeeChoice}`, function (err, res) {
+                          console.log(res);
+                        })
+                    })
+          })
+          
+        
+                
                 if (option.addRoles == "Salesperson") {
                     console.log (option.employeeChoice + " is now a " + option.addRoles + ".")
                     //return view of employee with the new option
@@ -370,7 +383,7 @@ function addEmployee() {
                 }
                 continuer();
                 })
-    })}
+            }})})}
   
 
     function continuer() {
