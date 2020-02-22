@@ -340,21 +340,72 @@ function addEmployee() {
                 name: "addRoles"
              }])
             .then(function(option) {
-                switch(option.addRoles) {
+                switch(option.addRoles, updates) {
+
                     case("Sales Lead"):
                         console.log(`You have changed ${option.employeeChoice}'s role to: ${option.addRoles}.`);
-                        connection.query(`UPDATE employee SET role_id = 1`, {
+                    
+                        connection.query(`UPDATE employee SET ? WHERE ${updates}`, {
+                            role_id: 1
                     }) 
                     break;
+
                     case("Salesperson"):
-                    console.log(`You have changed ${option.employeeChoice}'s role to: ${option.addRoles}.`);
-                    connection.query(`UPDATE employee SET role_id = 2`, {
-                }) 
-                break;
+                        console.log(`You have changed ${option.employeeChoice}'s role to: ${option.addRoles}.`);
+                    
+                        connection.query(`UPDATE employee SET ? WHERE ${updates}`, {
+                            role_id: 2
+                    }) 
+                    break;
+
+                    case("Lead Engineer"):
+                        console.log(`You have changed ${option.employeeChoice}'s role to: ${option.addRoles}.`);
+                    
+                        connection.query(`UPDATE employee SET ? WHERE ${updates}`, {
+                            role_id: 3
+                    }) 
+                    break;
+
+                    case("Software Engineer"):
+                        console.log(`You have changed ${option.employeeChoice}'s role to: ${option.addRoles}.`);
+                    
+                        connection.query(`UPDATE employee SET ? WHERE ${updates}`, {
+                            role_id: 4
+                    }) 
+                    break;
+
+                    case("Accountant"):
+                        console.log(`You have changed ${option.employeeChoice}'s role to: ${option.addRoles}.`);
+                    
+                        connection.query(`UPDATE employee SET ? WHERE ${updates}`, {
+                            role_id: 5
+                    }) 
+                    break;
+
+                    case("Legal Team Lead"):
+                        console.log(`You have changed ${option.employeeChoice}'s role to: ${option.addRoles}.`);
+                    
+                        connection.query(`UPDATE employee SET ? WHERE ${updates}`, {
+                            role_id: 6
+                    }) 
+                    break;
+
+                    case("Lawyer"):
+                        console.log(`You have changed ${option.employeeChoice}'s role to: ${option.addRoles}.`);
+                    
+                        connection.query(`UPDATE employee SET ? WHERE ${updates}`, {
+                            role_id: 7
+                    }) 
+                    break;
             }
                 continuer();
             })})}
 
+
+
+
+
+            
     function continuer() {
         inquirer
                 .prompt({
