@@ -79,28 +79,16 @@ function runInquirer() {
         })
     }
 //VIEWING EMPLOYEES BY DEPARTMENT
-    function viewDepartment() {
-      inquirer
-          .prompt({
-              name: "viewDepartment",
-              type: "list",
-              message: "Which department would you like to sort employees by?",
-              choices: ["Sales", "Engineering", "Finance", "Legal"]
-          })
-          .then(function(answers) {
-            const queryDept = 'SELECT department.name, employee.role_id, employee.first_name, employee.last_name FROM employee INNER JOIN department ON (employee.role_id = department.id) WHERE department.name = ?';
-
-            let deptTable = [];
-
-            connection.query(queryDept, [answers.viewDepartment], function (err, res) {
-                console.log(`There are ${res.length} employees in this department.`)
-                for (let i = 0; i < res.length; i++) {
-                    deptTable.push({first_name: res[i].first_name, last_name: res[i].last_name, department: res[i].name})
-                }
-                console.table(deptTable);
-                continuer();
-            })
-        })
+function viewDepartment() {
+    const query = 'SELECT department.name, first_name, last_name FROM employee INNER JOIN department ON employee.role_id = department.id ORDER BY department.name';
+    let deptList = [];
+    connection.query(query, function (err, res) {
+        for (let i = 0; i < res.length; i++) {
+            deptList.push({Department: res[i].name, First_Name: res[i].first_name, Last_Name: res[i].last_name })
+        }
+        console.table(deptList);
+        continuer()
+})
 }
         
 //VIEWING EMPLOYEES BY ROLE
@@ -424,4 +412,3 @@ function addEmployee() {
                     }
                 })
     }
-
