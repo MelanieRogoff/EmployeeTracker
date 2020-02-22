@@ -340,12 +340,13 @@ function addEmployee() {
                 name: "addRoles"
              }])
             .then(function(option) {
-                switch(option.addRoles, updates) {
+                const [first_name, last_name] = option.employeeChoice.split(" "); 
+                switch(option.addRoles) {
 
                     case("Sales Lead"):
                         console.log(`You have changed ${option.employeeChoice}'s role to: ${option.addRoles}.`);
                     
-                        connection.query(`UPDATE employee SET ? WHERE ${updates}`, {
+                        connection.query(`UPDATE employee SET ? WHERE first_name = "${first_name}" AND last_name = "${last_name}"`, {
                             role_id: 1
                     }) 
                     break;
@@ -353,7 +354,7 @@ function addEmployee() {
                     case("Salesperson"):
                         console.log(`You have changed ${option.employeeChoice}'s role to: ${option.addRoles}.`);
                     
-                        connection.query(`UPDATE employee SET ? WHERE ${updates}`, {
+                        connection.query(`UPDATE employee SET ? WHERE first_name = "${first_name}" AND last_name = "${last_name}"`, {
                             role_id: 2
                     }) 
                     break;
@@ -361,7 +362,7 @@ function addEmployee() {
                     case("Lead Engineer"):
                         console.log(`You have changed ${option.employeeChoice}'s role to: ${option.addRoles}.`);
                     
-                        connection.query(`UPDATE employee SET ? WHERE ${updates}`, {
+                        connection.query(`UPDATE employee SET ? WHERE first_name = "${first_name}" AND last_name = "${last_name}"`, {
                             role_id: 3
                     }) 
                     break;
@@ -369,7 +370,7 @@ function addEmployee() {
                     case("Software Engineer"):
                         console.log(`You have changed ${option.employeeChoice}'s role to: ${option.addRoles}.`);
                     
-                        connection.query(`UPDATE employee SET ? WHERE ${updates}`, {
+                        connection.query(`UPDATE employee SET ? WHERE first_name = "${first_name}" AND last_name = "${last_name}"`, {
                             role_id: 4
                     }) 
                     break;
@@ -377,7 +378,7 @@ function addEmployee() {
                     case("Accountant"):
                         console.log(`You have changed ${option.employeeChoice}'s role to: ${option.addRoles}.`);
                     
-                        connection.query(`UPDATE employee SET ? WHERE ${updates}`, {
+                        connection.query(`UPDATE employee SET ? WHERE first_name = "${first_name}" AND last_name = "${last_name}"`, {
                             role_id: 5
                     }) 
                     break;
@@ -385,7 +386,7 @@ function addEmployee() {
                     case("Legal Team Lead"):
                         console.log(`You have changed ${option.employeeChoice}'s role to: ${option.addRoles}.`);
                     
-                        connection.query(`UPDATE employee SET ? WHERE ${updates}`, {
+                        connection.query(`UPDATE employee SET ? WHERE first_name = "${first_name}" AND last_name = "${last_name}"`, {
                             role_id: 6
                     }) 
                     break;
@@ -393,7 +394,7 @@ function addEmployee() {
                     case("Lawyer"):
                         console.log(`You have changed ${option.employeeChoice}'s role to: ${option.addRoles}.`);
                     
-                        connection.query(`UPDATE employee SET ? WHERE ${updates}`, {
+                        connection.query(`UPDATE employee SET ? WHERE first_name = "${first_name}" AND last_name = "${last_name}"`, {
                             role_id: 7
                     }) 
                     break;
