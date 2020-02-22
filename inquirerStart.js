@@ -340,51 +340,18 @@ function addEmployee() {
                 name: "addRoles"
              }])
             .then(function(option) {
-                console.log(`You have changed ${option.employeeChoice}'s role to: ${option.addRoles}.`);
                 switch(option.addRoles) {
                     case("Sales Lead"):
-                    connection.query(`UPDATE employee LEFT JOIN role ON role.id = employee.role_id SET title = '${option.addRoles}' WHERE ?`, {
-                        role_id: 1
-                    })
-                    connection.query(`SELECT role.title, first_name, last_name FROM employee INNER JOIN role ON employee.role_id = role.id`)
+                        console.log(`You have changed ${option.employeeChoice}'s role to: ${option.addRoles}.`);
+                        connection.query(`UPDATE employee SET role_id = 1`, {
+                    }) 
                     break;
                     case("Salesperson"):
-                    connection.query(`UPDATE employee LEFT JOIN role ON role.id = employee.role_id SET title = '${option.addRoles}' WHERE ?`, {
-                        role_id: 2
-                    })
-                    connection.query(`SELECT role.title, first_name, last_name FROM employee INNER JOIN role ON employee.role_id = role.id`)
-                    break;
-                    case("Lead Engineer"):
-                    connection.query(`UPDATE employee LEFT JOIN role ON role.id = employee.role_id SET title = '${option.addRoles}' WHERE ?`, {
-                        role_id: 3
-                    })
-                    connection.query(`SELECT role.title, first_name, last_name FROM employee INNER JOIN role ON employee.role_id = role.id`)
-                    break;
-                    case("Software Engineer"):
-                    connection.query(`UPDATE employee LEFT JOIN role ON role.id = employee.role_id SET title = '${option.addRoles}' WHERE ?`, {
-                        role_id: 4
-                    })
-                    connection.query(`SELECT role.title, first_name, last_name FROM employee INNER JOIN role ON employee.role_id = role.id`)
-                    break;
-                    case("Accountant"):
-                    connection.query(`UPDATE employee LEFT JOIN role ON role.id = employee.role_id SET title = '${option.addRoles}' WHERE ?`, {
-                        role_id: 5
-                    })
-                    connection.query(`SELECT role.title, first_name, last_name FROM employee INNER JOIN role ON employee.role_id = role.id`)
-                    break;
-                    case("Legal Team Lead"):
-                    connection.query(`UPDATE employee LEFT JOIN role ON role.id = employee.role_id SET title = '${option.addRoles}' WHERE ?`, {
-                        role_id: 6
-                    })
-                    connection.query(`SELECT role.title, first_name, last_name FROM employee INNER JOIN role ON employee.role_id = role.id`)
-                    break;
-                    case("Lawyer"):
-                    connection.query(`UPDATE employee LEFT JOIN role ON role.id = employee.role_id SET title = '${option.addRoles}' WHERE ?`, {
-                        role_id: 7
-                    })
-                    connection.query(`SELECT role.title, first_name, last_name FROM employee INNER JOIN role ON employee.role_id = role.id`)
-                    break;
-                }
+                    console.log(`You have changed ${option.employeeChoice}'s role to: ${option.addRoles}.`);
+                    connection.query(`UPDATE employee SET role_id = 2`, {
+                }) 
+                break;
+            }
                 continuer();
             })})}
 

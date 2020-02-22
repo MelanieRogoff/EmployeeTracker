@@ -30,3 +30,7 @@ CREATE TABLE employee (
 );
 
 SELECT role.title, first_name, last_name FROM employee INNER JOIN role ON employee.role_id = role.id ORDER BY role.title;
+
+UPDATE employee INNER JOIN role ON role.id = employee.role_id SET role_id = 1;
+
+SELECT * FROM employee;
